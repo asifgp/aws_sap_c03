@@ -76,6 +76,31 @@
 * **Amazon MemoryDB for Redis**
 
 
+## 1. Complex Multi-Account Networking & Hybrid Topologies
+
+* **AWS Transit Gateway (TGW) Enterprise Routing:** Multi-TGW peering, route table isolation (Segmentation: Prod vs. Non-Prod vs. Shared Services), TGW Connect for SD-WAN integration, Route Analyzer.
+* **Private Endpoint Management:** Large-scale AWS PrivateLink setup, Endpoint Services behind Network Load Balancers, Route 53 Private Hosted Zone sharing across multi-account VPCs via TGW or VPC Peering.
+* **Hybrid Connectivity at Scale:** AWS Direct Connect (DX) with DX Gateways, Transit Virtual Interfaces (Transit VIF), Link Aggregation Groups (LAG), MACsec encryption, and BGP community routing.
+* **Network Security & Perimeter Control:** AWS Network Firewall deployments (centralized vs. distributed inspection VPCs), AWS WAF enterprise rule management via AWS Firewall Manager, Route 53 Resolver DNS Firewall.
+
+## 2. Modern Application Architectures & Serverless Engineering
+
+* **Advanced Event-Driven Patterns:** Amazon EventBridge (custom buses, cross-account event routing, EventBridge Pipes, API Destinations, Schema Registry), SQS FIFO deduplication and Dead Letter Queue (DLQ) automated replay.
+* **Complex Workflow Orchestration:** AWS Step Functions (Standard vs. Express workflows, Distributed Map for high-throughput batch execution, Sagas pattern for distributed transactions, error handling/retries).
+* **API Management Strategy:** API Gateway private endpoints, client certificates (mTLS), custom Lambda authorizers, usage plans, throttling algorithms (token bucket), and response caching strategies.
+
+## 3. Containerization & Service Mesh Orchestration
+
+* **Amazon EKS & ECS Scale Architectures:** ECS Capacity Providers (Fargate + Spot pools), EKS Managed Node Groups, Karpenter for real-time Kubernetes auto-scaling.
+* **Service Networking:** Amazon VPC Lattice for zero-trust cross-account microservice networking, AWS App Mesh, and Amazon ECS Service Connect.
+* **Container Identity & Security:** EKS IAM Roles for Service Accounts (IRSA), EKS Pod Identities, ECR cross-Region/cross-account image replication, and vulnerability scanning.
+
+## 4. Generative AI, RAG & Purpose-Built Data Architectures
+
+* **Amazon Bedrock Architecture:** Multi-tenant Bedrock deployment, Provisioned Throughput allocation, fine-tuning vs. Continued Pre-training, Bedrock Guardrails for PII/safety filtering.
+* **Retrieval-Augmented Generation (RAG) at Scale:** Integration with vector databases (Amazon OpenSearch Serverless, Aurora PostgreSQL pgvector, Bedrock Knowledge Bases), embedding model pipelines, and hybrid search.
+* **Agentic Workflows:** Amazon Bedrock Agents, multi-step tool execution, and human-in-the-loop (HITL) authorization integrations.
+
 
 
 
