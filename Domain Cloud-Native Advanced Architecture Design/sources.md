@@ -19,5 +19,7 @@ AWS EC2(Instance Type, Tenancy & Placement Group):
 https://www.geeksforgeeks.org/devops/aws-ec2-instance-type-tenancy-placement-group/
 https://dev.to/himanshusinghtomar/ec2-placement-groups-optimizing-instance-placement-for-performance-and-availability-5hhi
 
+Step Functions Distributed Map:
+https://hidekazu-konishi.com/entry/aws_step_functions_distributed_map_guide.html
 
 
