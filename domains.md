@@ -42,6 +42,13 @@
 * **Disaster Recovery (DR):** Backup and recovery strategies (Pilot Light, Warm Standby, Multi-Region Active-Active/Active-Passive).
 * **Data Management:** Cross-Region and cross-account replication (S3 Same/Cross-Region Replication, KMS key sharing, DynamoDB Global Tables).
 
+Task 1.1: Architect network connectivity strategies.Focus: Multi-account VPC architectures, AWS Transit Gateway, AWS Direct Connect, Hybrid Cloud routing, and DNS configuration across multiple accounts.
+Task 1.2: Prescribe security controls.Focus: Cross-account access management, Service Control Policies (SCPs), integration with enterprise Identity Providers (IdP), central logging, and data encryption strategies.
+Task 1.3: Design a multi-account environment.Focus: AWS Organizations structure, AWS Control Tower governance, account isolation strategies, and centralized monitoring/compliance.
+Task 1.4: Design a cost-optimization and cost-allocation strategy.Focus: Tagging enforcement strategies, multi-account cost monitoring, chargeback models, and purchasing options (Reserved Instances, Savings Plans).   
+
+
+
 ---
 
 ### Domain 2: Design for New Solutions (29%)
