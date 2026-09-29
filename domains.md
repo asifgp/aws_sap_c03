@@ -28,25 +28,31 @@
 
 ### Domain 1: Design Solutions for Organizational Complexity (26%)
 
-#### 1.1 Network Connectivity Strategies
+#### Network Connectivity Strategies
 * **Hybrid Connectivity:** Direct Connect (DX), AWS Transit Gateway, VPN (Site-to-Site & Client VPN).
 * **Multi-Account Networking:** Transit Gateway Peering, VPC Peering, VPC Endpoints (Interface & Gateway), AWS PrivateLink.
 * **DNS Resolution:** Route 53 Resolver endpoints (Inbound/Outbound) across hybrid on-premises and multi-account architectures.
 
-#### 1.2 Security & Governance Controls
+#### Security & Governance Controls
 * **Multi-Account Management:** AWS Organizations, Organizational Units (OUs), Service Control Policies (SCPs).
 * **Identity & Access:** IAM Identity Center (AWS SSO), SAML 2.0 federation, cross-account IAM roles, ABAC (Attribute-Based Access Control).
 * **Compliance & Auditing:** AWS Config (Conformance Packs), AWS Control Tower, AWS CloudTrail organizational trails.
 
-#### 1.3 Business Continuity Strategies across Multiple Accounts
+#### Business Continuity Strategies across Multiple Accounts
 * **Disaster Recovery (DR):** Backup and recovery strategies (Pilot Light, Warm Standby, Multi-Region Active-Active/Active-Passive).
 * **Data Management:** Cross-Region and cross-account replication (S3 Same/Cross-Region Replication, KMS key sharing, DynamoDB Global Tables).
 
-Task 1.1: Architect network connectivity strategies.Focus: Multi-account VPC architectures, AWS Transit Gateway, AWS Direct Connect, Hybrid Cloud routing, and DNS configuration across multiple accounts.
-Task 1.2: Prescribe security controls.Focus: Cross-account access management, Service Control Policies (SCPs), integration with enterprise Identity Providers (IdP), central logging, and data encryption strategies.
-Task 1.3: Design a multi-account environment.Focus: AWS Organizations structure, AWS Control Tower governance, account isolation strategies, and centralized monitoring/compliance.
-Task 1.4: Design a cost-optimization and cost-allocation strategy.Focus: Tagging enforcement strategies, multi-account cost monitoring, chargeback models, and purchasing options (Reserved Instances, Savings Plans).   
+#### Architect network connectivity strategies.
+* Focus: Multi-account VPC architectures, AWS Transit Gateway, AWS Direct Connect, Hybrid Cloud routing, and DNS configuration across multiple accounts.
 
+#### Prescribe security controls.
+* Focus: Cross-account access management, Service Control Policies (SCPs), integration with enterprise Identity Providers (IdP), central logging, and data encryption strategies.
+
+#### Design a multi-account environment.
+* Focus: AWS Organizations structure, AWS Control Tower governance, account isolation strategies, and centralized monitoring/compliance.
+
+#### Design a cost-optimization and cost-allocation strategy.
+* Focus: Tagging enforcement strategies, multi-account cost monitoring, chargeback models, and purchasing options (Reserved Instances, Savings Plans).   
 
 
 ---
