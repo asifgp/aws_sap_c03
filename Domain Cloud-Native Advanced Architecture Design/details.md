@@ -1,0 +1,120 @@
+## 1. EC2 Enterprise Scaling & Placement
+
+### Production Use Cases
+* **HPC & Ultra-Low Latency Messaging (Cluster Placement Group):** Deploying high-performance computing (HPC) nodes, tightly coupled grid-computing applications, or high-frequency trading platforms requiring low network latency and high network throughput.
+* **Distributed Databases & Cassandra Clusters (Partition Placement Group):** Hosting large distributed workloads (e.g., Apache Cassandra, Hadoop, Kafka) where nodes are split across discrete logical partitions to ensure no single hardware rack failure takes down multiple replicas.
+* **Critical Single-Points-of-Failure (Spread Placement Group):** Placing a small group of critical instances (max 7 per AZ) on distinct physical underlying hardware racks with independent power and network supplies.
+* **Cost-Optimized Batch & Web Microservices (Mixed Instances ASG):** Combining On-Demand (for baseline capacity) and Spot Instances (for cost savings up to 90%) with multiple instance types (e.g., c5.xlarge, c6i.xlarge, m5.xlarge) in a single Auto Scaling Group.
+* **Guaranteed Capacity for Critical Events (Capacity Reservations + ASGs):** Reserving compute capacity via On-Demand Capacity Reservations (ODCR) for predictable peak events (e.g., Black Friday) and targeting those reservations with Auto Scaling groups.
+
+### SAP-C03 Architecture Scenarios
+* **Scenario A:** An HPC application requires 10 Gbps inter-node throughput and sub-millisecond latency.
+  * **Architectural Solution:** Launch instances in a Cluster Placement Group within a single Availability Zone (AZ). Use Elastic Fabric Adapter (EFA) enabled instance types.
+* **Scenario B:** A company needs to run a high-traffic web application cost-effectively while guaranteeing a minimum capacity during AZ outages.
+  * **Architectural Solution:** Create ODCRs across multiple AZs for baseline capacity. Configure an ASG with an Attribute-Based Instance Type Selection Launch Template using capacity-optimized Spot allocation strategies for excess traffic, and set CapacityReservationPreference to open or targeted.
+
+### Troubleshooting & Failure Modes
+* **InsufficientInstanceCapacity / IceException in Cluster Placement Groups:**
+  * **Cause:** Launching instances incrementally into an existing cluster group when the underlying hardware segment runs out of physical capacity.
+  * **Fix:** Launch all required instances simultaneously in a single launch request. If it fails, stop all instances, restart them together, or recreate the cluster placement group.
+* **Auto Scaling Group Fails to Utilize Reserved Capacity (ODCRs):**
+  * **Cause:** The Launch Template specifies `CapacityReservationPreference: None`, or `targeted` without supplying the explicit `CapacityReservationResourceGroupArn`.
+  * **Fix:** Update Launch Template to specify `targeted` with the correct Resource Group ARN, or set `CapacityReservationPreference: open`.
+* **Spot Instance Termination Spikes:**
+  * **Cause:** Using price-capacity-optimized with too few instance types specified.
+  * **Fix:** Diversify the ASG across at least 5 to 10 distinct instance families and sizes. Enable Capacity Rebalance in the ASG to proactively launch replacement Spot instances before termination notifications occur.
+
+---
+
+## 2. Serverless Event-Driven Orchestration
+
+### Production Use Cases
+* **ETL & Big Data Batch Pipelines (Step Functions Distributed Map):** Processing millions of files in Amazon S3 concurrently by executing child workflows (Standard or Express) via Step Functions Distributed Map.
+* **Distributed Transaction Management (Saga Pattern):** Coordinating multi-service workflows (e.g., Order Payment $\rightarrow$ Inventory Reservation $\rightarrow$ Shipping) with automated rollback steps upon state failure.
+* **Database Connection Heavy Serverless Functions (Lambda VPC + Proxy):** Lambda functions connecting to Amazon RDS/Aurora databases inside a VPC without exhausting connection pools or suffering legacy Cold Start ENI allocation limits.
+* **Steady Latency Workloads (Lambda Provisioned Concurrency):** Financial calculation APIs or checkout microservices requiring immediate execution with zero cold-start delay.
+
+### SAP-C03 Architecture Scenarios
+* **Scenario A:** An enterprise needs to ingest 500,000 JSON documents from S3 every hour, validate their contents, write valid records to DynamoDB, and output error summaries.
+  * **Architectural Solution:** Implement a Step Functions workflow using Distributed Map set to read directly from S3. Set ExecutionType to EXPRESS for child executions to minimize cost, use ItemBatcher to aggregate records per invocation, and set ToleratedFailurePercentage to prevent single-item failures from halting the batch.
+* **Scenario B:** A long-running synchronous payment processing workflow exceeds the 15-minute Lambda execution limit and requires human approval for payments $> \$10,000$.
+  * **Architectural Solution:** Use Step Functions Standard Workflows with Task Tokens (`waitForTaskToken`). Lambda emits the token to an SQS queue, and an admin UI sends a `SendTaskSuccess` callback once approved.
+
+### Troubleshooting & Failure Modes
+* **Step Functions Distributed Map Failing with States.TaskFailed:**
+  * **Cause:** Missing `states:StartExecution` permissions on the state machine execution role or incorrect ARN scoping for Express child executions.
+  * **Fix:** Grant `states:StartExecution` on the parent state machine ARN, and ensure the policy accounts for express execution ARN prefixes.
+* **Lambda Cold Starts causing API Gateway 504 Timeouts:**
+  * **Cause:** High cold-start duration due to large deployment packages, heavy initialization code, or VPC attachment logic under sudden burst traffic.
+  * **Fix:** Move heavy client initializations outside the function handler (global scope), switch to ARM64 (graviton2), or attach Provisioned Concurrency coupled with Application Auto Scaling.
+* **TooManyRequestsException / Lambda Throttling:**
+  * **Cause:** Unreserved concurrency being consumed by a run-away background function, starving critical APIs in the same AWS account/Region.
+  * **Fix:** Set explicit Reserved Concurrency on non-critical functions to cap their utilization, and set Provisioned Concurrency on time-sensitive functions.
+
+---
+
+## 3. API Management
+
+### Production Use Cases
+* **Public SaaS Ingress & Microservices (API Gateway REST vs. HTTP APIs):** Using HTTP APIs for low-latency, low-cost HTTP routing, and REST APIs for advanced capabilities like client certificate validation (mTLS), WAF integration, AWS WebACL, and API keys/Usage Plans.
+* **Internal Zero-Trust VPC APIs (Private Endpoints):** Exposing private microservices securely to on-premise networks or cross-account VPCs using API Gateway Private Endpoints backed by VPC Interface Endpoints (`com.amazonaws.<region>.execute-api`).
+* **Real-Time Collaborative Apps (AWS AppSync GraphQL):** Mobile/web apps needing real-time bidirectional data synchronization (via WebSockets/Subscriptions) and offline caching with built-in conflict resolution (Optimistic Concurrency / Auto Merge).
+
+### SAP-C03 Architecture Scenarios
+* **Scenario A:** An enterprise needs to expose an internal backend API to a third-party partner over AWS Direct Connect without routing traffic over the public internet.
+  * **Architectural Solution:** Deploy an API Gateway Private REST API utilizing Interface VPC Endpoints (`com.amazonaws.<region>.execute-api`). Attach an API Gateway Resource Policy restricting access exclusively to the partner’s VPC Endpoint ID (`aws:sourceVpce`).
+* **Scenario B:** A multi-tenant application requires strict rate-limiting per customer tier (Free, Tier 1, Premium) with custom JWT validation.
+  * **Architectural Solution:** Deploy an API Gateway REST API with a Lambda Authorizer to parse tenant claims from JWTs. Map the claims to Usage Plans and API Keys with configured Rate and Burst throttling limits.
+
+### Troubleshooting & Failure Modes
+* **API Gateway Returning 403 Forbidden on Private API Call:**
+  * **Cause:** Private DNS is disabled on the Interface Endpoint, or the API Gateway Resource Policy lacks permissions for the VPC Endpoint.
+  * **Fix:** Ensure Private DNS is enabled on the endpoint, or explicitly pass the `Host: <api-id>.execute-api.<region>.amazonaws.com` header when connecting to the endpoint IP.
+* **AppSync GraphQL Mutations Failing with Conflict Errors:**
+  * **Cause:** High-frequency simultaneous writes on the same item when using `AUTOMERGE` or `OPTIMISTIC_CONCURRENCY` conflict detection.
+  * **Fix:** Switch to a Lambda Conflict Handler for custom business logic, or re-architect schema mutations to append to a event-log pattern.
+* **504 Gateway Timeout on API Gateway:**
+  * **Cause:** Backend integration (Lambda, HTTP endpoint) taking longer than API Gateway's hard 29-second maximum integration timeout.
+  * **Fix:** Convert the synchronous API Gateway endpoint to an asynchronous pattern (e.g., API Gateway $\rightarrow$ SQS $\rightarrow$ Lambda), returning a 202 Accepted status with a polling URL or WebSocket callback.
+
+---
+
+## 4. Messaging & Decoupling
+
+### Production Use Cases
+* **Cross-Account Event Bus Architecture (Amazon EventBridge):** Ingesting, filtering, and routing domain events across dozens of enterprise AWS accounts without tight coupling.
+* **Point-to-Point Point-in-Order Processing (Amazon SQS FIFO):** Financial transaction processing and ledger generation requiring strict order-of-arrival execution and exact-once processing per `MessageGroupId`.
+* **Massive Broadcast Fan-Out (Amazon SNS + SQS):** Publishing an event once to an SNS topic and fanning out to hundreds of distinct SQS queues owned by independent microservice teams.
+* **Direct Event Integration without Glue Code (EventBridge Pipes):** Connecting sources (e.g., DynamoDB Streams, SQS) directly to targets (e.g., Step Functions, EventBridge) with point-to-point filtering, enrichment (via Lambda), and transformation.
+
+### SAP-C03 Architecture Scenarios
+* **Scenario A:** A company wants to capture object state changes in Amazon S3 and process them in exact chronological order without writing custom polling code.
+  * **Architectural Solution:** Configure S3 Event Notifications with FIFO delivery enabled directly to an SQS FIFO Queue. Alternatively, enable S3 EventBridge integration, route events through an EventBridge rule to an SQS FIFO queue with `MessageGroupId` mapped to `$.detail.object.key`.
+* **Scenario B:** A monolithic ordering system needs to notify Inventory, Analytics, and Billing systems simultaneously when an order is placed. Filters must ensure the Billing queue only receives orders where `total > 0`.
+  * **Architectural Solution:** Publish order events to an Amazon SNS Topic. Subscribe three SQS Queues (Inventory, Analytics, Billing) to the topic. Apply an SNS Subscription Filter Policy on the Billing queue subscription.
+
+### Troubleshooting & Failure Modes
+* **SQS FIFO Queue Throughput Bottlenecks:**
+  * **Cause:** Messages are published using a single `MessageGroupId`, limiting queue throughput to 300 messages/sec (or 3,000 msg/sec with high-throughput mode enabled).
+  * **Fix:** Partition workloads by assigning distinct, high-cardinality `MessageGroupId` values (e.g., `UserId` or `OrderId`) to enable parallel processing across message groups.
+* **EventBridge Rule Not Triggering Target Lambda Function:**
+  * **Cause:** Mismatch between the Event Pattern JSON structure and the actual incoming event payload, or missing Resource Policy permissions on the target.
+  * **Fix:** Use EventBridge Sandbox/Event Pattern Tester to validate the pattern JSON. Verify that the target resource policy grants `events.amazonaws.com` permission to invoke it (`lambda:InvokeFunction`).
+* **Infinite Loops in EventBridge / SQS / Lambda Architectures:**
+  * **Cause:** A Lambda function triggered by an EventBridge event processes the data and publishes a new event back to the same bus that matches its own trigger rule.
+  * **Fix:** Restrict Event Patterns using precise detail-type filters, or include an explicit context tag (`processed: true`) and drop events matching that state.
+
+---
+
+## Quick Reference Matrix for SAP-C03
+
+| Service / Feature | Primary Capability | Key Boundary / Limit to Remember | Exam Trap to Avoid |
+| :--- | :--- | :--- | :--- |
+| **Cluster Placement Group** | Low-latency, high network throughput | Single AZ only | Do not use across multiple AZs |
+| **Spread Placement Group** | Maximum hardware isolation | Max 7 instances per AZ | Do not use for large compute clusters (>7 nodes/AZ) |
+| **Step Functions Dist. Map** | Massively parallel processing | 10,000 execution concurrency | Always set `ToleratedFailurePercentage > 0` |
+| **SQS Standard vs. FIFO** | Ordering & Deduplication | Standard = unlimited throughput; FIFO = 300-3000 msg/sec | Standard = "At-least-once"; FIFO = "Exactly-once" |
+| **EventBridge Pipes** | Direct source-to-target integration | 1-to-1 processing pipeline | Do not use for 1-to-N broadcasting (use Event Bus or SNS) |
+
+
+
