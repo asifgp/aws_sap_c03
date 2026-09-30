@@ -7,10 +7,6 @@
 * **Auto Scaling Groups:** Mixed instance types, Spot pools, EC2 Launch Templates
 * **Capacity Reservations**
 
-### Serverless Event-Driven Orchestration
-* **AWS Step Functions:** Standard vs. Express Workflows, Distributed Map, error handling, sagas
-* **AWS Lambda Advanced Patterns:** Concurrency limits, cold start mitigation, Lambda Layers, VPC integration, Provisioned Concurrency
-
 ### API Management
 * **Amazon API Gateway:** REST vs. HTTP APIs, private endpoints, custom authorizers, usage plans, throttling, caching
 * **AWS AppSync:** GraphQL APIs, subscriptions, conflict resolution
@@ -83,11 +79,6 @@
 * **Hybrid Connectivity at Scale:** AWS Direct Connect (DX) with DX Gateways, Transit Virtual Interfaces (Transit VIF), Link Aggregation Groups (LAG), MACsec encryption, and BGP community routing.
 * **Network Security & Perimeter Control:** AWS Network Firewall deployments (centralized vs. distributed inspection VPCs), AWS WAF enterprise rule management via AWS Firewall Manager, Route 53 Resolver DNS Firewall.
 
-## 2. Modern Application Architectures & Serverless Engineering
-
-* **Advanced Event-Driven Patterns:** Amazon EventBridge (custom buses, cross-account event routing, EventBridge Pipes, API Destinations, Schema Registry), SQS FIFO deduplication and Dead Letter Queue (DLQ) automated replay.
-* **Complex Workflow Orchestration:** AWS Step Functions (Standard vs. Express workflows, Distributed Map for high-throughput batch execution, Sagas pattern for distributed transactions, error handling/retries).
-* **API Management Strategy:** API Gateway private endpoints, client certificates (mTLS), custom Lambda authorizers, usage plans, throttling algorithms (token bucket), and response caching strategies.
 
 ## 3. Containerization & Service Mesh Orchestration
 
