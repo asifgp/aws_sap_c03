@@ -23,7 +23,7 @@ Issue: Infinite reprocessing loop between primary queue and DLQ.
 Diagnosis: Validate that fixed target code addresses root exceptions before triggering redrive tasks. Ensure unparseable poison-pill messages are archived to S3 instead of re-queued indefinitely.
 
 * Amazon Aurora Native Database Streams/CDC
-* ElastiCache Serverless
+* Amazon ElastiCache Serverless (Redis)
 * Key Strategies to Improve Write Operations on DDB
   Batch Operations: Group multiple write requests into a single call using BatchWriteItem. This reduces network overhead and API call costs compared to individual PutItem or DeleteItem requests. A single batch handles up to 25 items or 16 MB of data.
   Write Sharding: Distribute high-volume write workloads across multiple partitions. Avoid hot partitions by appending a random suffix (e.g., numbers 1 to 100) or a calculated suffix (like an ID modulo) to your partition keys.
