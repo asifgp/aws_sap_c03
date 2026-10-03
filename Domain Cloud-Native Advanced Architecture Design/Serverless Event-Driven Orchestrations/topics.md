@@ -30,6 +30,12 @@ Diagnosis: Validate that fixed target code addresses root exceptions before trig
   Conditional Updates: Use ConditionExpressions to write or update data only when specific criteria are met. This prevents redundant writes and saves consumed Write Capacity Units (WCUs).
   Capacity Mode Tuning: Choose On-Demand mode for unpredictable or spiky workloads, or Provisioned mode with Auto Scaling for steady, predictable traffic. Pre-warm your tables if you expect a massive traffic surge.
   Attribute Minimization: Store only necessary attributes or pointer references (like storing large files in Amazon S3 and saving just the object URL in DynamoDB) to keep item sizes under 1 KB, reducing WCU consumption per write
+* Step Functions Map State
+* AWS Batch/AWS Step function
+* EventBridge: Event Bus, Event Propagation, Subscription to Event Bus, Event Archiving, EventBridge Replay
+* Attribute-Based Access Control (ABAC) IAM policies
+* Partner Event Sourcing association inside EventBridge
+* How to create a deadman's switch using DynamoDB TTL & event sourcing
 * 
 
 
