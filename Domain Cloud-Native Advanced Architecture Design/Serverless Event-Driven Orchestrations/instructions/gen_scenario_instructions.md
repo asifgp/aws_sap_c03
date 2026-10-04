@@ -29,11 +29,26 @@ Follow either of the following formats:
 * Create serverless event-driven (architecture & development) use cases & scenarios on AWS.
 
 **Output:**  
-Follow either of the following formats:  
-* **format-01:** Topic > scenarios/use cases/challenges > 1. assumptions, 2. pattern considerations, 3. standard practices, 4. troubleshooting, 5. standard Q&As.
-* **format-02:** Topic > scenarios/use cases/challenges > 1. pattern considerations, 2. standard practices, 3. troubleshooting, 4. standard Q&As.  
-* **format-03:** Topic > scenarios/use cases/challenges > 1. troubleshooting, 2. standard Q&As.
+outlines for each output(follow either of the given outlines for each output):  
+* **outline-format-01:** Topic > scenarios/use cases/challenges > 1. assumptions, 2. pattern considerations, 3. standard practices, 4. troubleshooting, 5. standard Q&As.
+* **outline-format-02:** Topic > scenarios/use cases/challenges > 1. pattern considerations, 2. standard practices, 3. troubleshooting, 4. standard Q&As.  
+* **outline-format-03:** Topic > scenarios/use cases/challenges > 1. troubleshooting, 2. standard Q&As.
+
+output format: markdown-formatted text as follows:
+### 1. <output heading>
+* **Topic:** <Topic>
+* **Scenario / Use Case:** <Scenario / Use Case>.
+1. **Assumptions:**
+   * <Assumption 1>.
+   * <Assumption N>.
+2. **Pattern Considerations:**
+   * <Pattern Consideration 1>.
+   * <Pattern Consideration N>.
+3. **Troubleshooting:**
+4. **Questions:**
+
+Produce at least 50 different verified outputs with at least 5 sample Q&As for each.
 
 **Rules:** 
-Mention the source for each output. First Verify the correctness then produce the output. Produce at least 50 different verified outputs with at least 5 sample Q&As for each.
+Mention the source for each output. First Verify the correctness then produce the output.
 
